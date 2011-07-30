@@ -1,0 +1,11 @@
+D:\opensource\FtpExplorer\bin\Debug\FtpExplorer.exe
+D:\opensource\FtpExplorer\bin\Debug\FtpExplorer.pdb
+D:\opensource\FtpExplorer\bin\Debug\FtpExplorer.xml
+D:\opensource\FtpExplorer\obj\Debug\ResolveAssemblyReference.cache
+D:\opensource\FtpExplorer\obj\Debug\FtpExplorer.MainBox.resources
+D:\opensource\FtpExplorer\obj\Debug\FtpExplorer.Resources.resources
+D:\opensource\FtpExplorer\obj\Debug\FtpExplorer.vbproj.GenerateResource.Cache
+D:\opensource\FtpExplorer\obj\Debug\FtpExplorer.exe
+D:\opensource\FtpExplorer\obj\Debug\FtpExplorer.xml
+D:\opensource\FtpExplorer\obj\Debug\FtpExplorer.pdb
+D:\opensource\FtpExplorer\obj\Debug\FtpExplorer.LoginBox.resources
