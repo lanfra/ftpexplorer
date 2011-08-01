@@ -34,7 +34,7 @@ Public Class MainBox
         Return file
     End Function
 
-    Private Sub tvwLocal_AfterExpand(ByVal sender As Object, ByVal e As System.Windows.Forms.TreeViewEventArgs) Handles tvwLocal.AfterExpand
+    Private Sub tvwLocal_AfterExpand(ByVal sender As Object, ByVal e As System.Windows.Forms.TreeViewEventArgs)
         On Error GoTo em
         Dim current As TreeNode = e.Node
         'Dim nextFile As String = Dir(current.Name & "\", FileAttribute.Directory)
@@ -75,13 +75,11 @@ em:
             MessageBox.Show("Not an FTP Url")
             Exit Sub
         End If
-        Dim login As New LoginBox()
-        Dim cred As String() = login.GetCredentials()
+        'Dim login As New LoginBox()
+        'Dim cred As String() = login.GetCredentials()
         txtLog.AppendText("Preparing to connect...")
-        If cred IsNot Nothing Then
-            client = New FtpClient(txtUrl.Text, cred(0), cred(1))
-            ListRemoteDirectory("")
-        End If
+        client = New FtpClient(txtUrl.Text, txtUsername.Text, txtPassword.Text)
+        ListRemoteDirectory("")
         Exit Sub
 em:
         MessageBox.Show(Err.Description)
@@ -105,7 +103,11 @@ em:
     End Sub
 
     Private Sub client_StatusChanged(ByVal newStatus As String) Handles client.StatusChanged
-        txtLog.AppendText(newStatus & Environment.NewLine)
+        'txtLog.AppendText(newStatus & Environment.NewLine)
+
+        txtLog.Text &= newStatus & Environment.NewLine
+        txtLog.SelectionStart = txtLog.Text.Length
+        txtLog.ScrollToCaret()
         Application.DoEvents()
     End Sub
 
@@ -122,19 +124,14 @@ em:
         lblStatus.Text = client.CurrentDirectory & IIf(client.CurrentDirectory.Length = 1, "", "/") & e.Item.Text
     End Sub
 
-    Private Sub btnUpload_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnUpload.Click
+    Private Sub UploadSelected()
         If tvwLocal.SelectedNode IsNot Nothing AndAlso tvwLocal.SelectedNode.ImageIndex = Images.FILE Then
             Dim fi As New FileInfo(tvwLocal.SelectedNode.FullPath)
             client.Upload(fi)
             ListRemoteDirectory(".")
         End If
     End Sub
-
-    Private Sub lvwRemote_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lvwRemote.SelectedIndexChanged
-
-    End Sub
-
-    Private Sub btnDownload_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnDownload.Click
+    Private Sub DownloadSelected()
         If tvwLocal.SelectedNode IsNot Nothing AndAlso tvwLocal.SelectedNode.ImageIndex = Images.CLOSED_FOLDER AndAlso _
         lvwRemote.SelectedItems(0).ImageIndex = Images.FILE Then
             Dim sourceFile As String = lvwRemote.SelectedItems(0).Text
@@ -146,5 +143,13 @@ em:
             node.Expand()
             node.Nodes(fi.FullName).EnsureVisible()
         End If
+    End Sub
+
+    Private Sub DownloadToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DownloadToolStripMenuItem.Click
+        DownloadSelected()
+    End Sub
+
+    Private Sub UploadToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles UploadToolStripMenuItem.Click
+        UploadSelected()
     End Sub
 End Class
