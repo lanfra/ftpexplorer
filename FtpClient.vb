@@ -106,10 +106,12 @@ em:
             Try
                 'open request to send
                 Using rs As Stream = ftp.GetRequestStream
+                    Dim totBytes As Long = 0
                     Do
                         dataRead = fs.Read(content, 0, BufferSize)
                         rs.Write(content, 0, dataRead)
-                        RaiseEvent StatusChanged(dataRead.ToString() & " bytes sent")
+                        totBytes += dataRead
+                        RaiseEvent StatusChanged(totBytes.ToString() & " bytes sent...")
                     Loop Until dataRead < BufferSize
                     rs.Close()
                     RaiseEvent StatusChanged("File uploaded successfully")
@@ -146,20 +148,24 @@ em:
                     Try
                         Dim buffer(2047) As Byte
                         Dim read As Integer = 0
+                        Dim totBytes As Long = 0
                         Do
                             read = responseStream.Read(buffer, 0, buffer.Length)
                             fs.Write(buffer, 0, read)
+                            totBytes += read
+                            RaiseEvent StatusChanged(totBytes.ToString() & " bytes received...")
                         Loop Until read = 0
                         responseStream.Close()
                         fs.Flush()
                         fs.Close()
+                        RaiseEvent StatusChanged(sourceFilename & " - Download successful...")
                     Catch ex As Exception
                         'catch error and delete file only partially downloaded
                         fs.Close()
                         'delete target file as it's incomplete
                         targetFI.Delete()
                         'Throw
-                        RaiseEvent StatusChanged("Download was incomplete due to an error...")
+                        RaiseEvent StatusChanged(sourceFilename & " - Download was incomplete due to an error...")
                     End Try
                 End Using
                 responseStream.Close()
