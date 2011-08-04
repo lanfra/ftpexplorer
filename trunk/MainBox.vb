@@ -34,7 +34,7 @@ Public Class MainBox
         Return file
     End Function
 
-    Private Sub tvwLocal_AfterExpand(ByVal sender As Object, ByVal e As System.Windows.Forms.TreeViewEventArgs)
+    Private Sub tvwLocal_AfterExpand(ByVal sender As Object, ByVal e As System.Windows.Forms.TreeViewEventArgs) Handles tvwLocal.AfterExpand
         On Error GoTo em
         Dim current As TreeNode = e.Node
         'Dim nextFile As String = Dir(current.Name & "\", FileAttribute.Directory)
@@ -125,13 +125,22 @@ em:
     End Sub
 
     Private Sub UploadSelected()
-        If tvwLocal.SelectedNode IsNot Nothing AndAlso tvwLocal.SelectedNode.ImageIndex = Images.FILE Then
+        If client Is Nothing Then
+            MessageBox.Show("Not connected")
+        ElseIf tvwLocal.SelectedNode IsNot Nothing AndAlso tvwLocal.SelectedNode.ImageIndex = Images.FILE Then
             Dim fi As New FileInfo(tvwLocal.SelectedNode.FullPath)
             client.Upload(fi)
             ListRemoteDirectory(".")
+        Else
+            MessageBox.Show("Please select a file to upload")
         End If
     End Sub
     Private Sub DownloadSelected()
+        If tvwLocal.SelectedNode.ImageIndex <> Images.CLOSED_FOLDER Then
+            If tvwLocal.SelectedNode.Parent IsNot Nothing AndAlso tvwLocal.SelectedNode.Parent.ImageIndex = Images.CLOSED_FOLDER Then
+                tvwLocal.SelectedNode = tvwLocal.SelectedNode.Parent
+            End If
+        End If
         If tvwLocal.SelectedNode IsNot Nothing AndAlso tvwLocal.SelectedNode.ImageIndex = Images.CLOSED_FOLDER AndAlso _
         lvwRemote.SelectedItems(0).ImageIndex = Images.FILE Then
             Dim sourceFile As String = lvwRemote.SelectedItems(0).Text
